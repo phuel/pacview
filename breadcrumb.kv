@@ -1,0 +1,34 @@
+#:kivy 2.0.0
+
+#:set BREADCRUMB_HEIGHT 30
+
+#:import HighlightLabel highlight_label
+
+# #:include imagebutton.kv
+
+<ShortenedHighlightLabel@HighlightLabel>:
+    markup: True
+    highlight_color: (*HIGHLIGHT_COLOR, 1)
+    size_hint_y: None
+    height: BREADCRUMB_HEIGHT
+    text_size: self.width, 30
+    halign: 'left'
+    valign: 'top'
+    padding: 5,5
+    shorten: True
+
+
+<BreadCrumb>:
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: BREADCRUMB_HEIGHT
+    ShortenedHighlightLabel:
+        text: root.item_stack
+        padding: 3,3
+        on_ref_clicked: root._on_back_ref_clicked(args[1])
+    ImageButton:
+        size_hint_x: None
+        width: 70
+        on_release: root.back()
+        source: 'img/back_button.png'
+        disabled: not root.can_go_back

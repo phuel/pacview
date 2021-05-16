@@ -1,0 +1,61 @@
+#:kivy 2.0.0
+
+<YesNoDialog>:
+    orientation: 'vertical'
+    Label:
+        size_hint_y: None
+        height: self.texture_size[1]
+        text_size: self.width, None
+        text: root.question
+        font_size: 24
+        markup: True
+        padding: 10,10
+    BoxLayout:
+        orientation: 'horizontal'
+        Widget:
+        Button:
+            size_hint_y: None
+            height: 40
+            font_size: 24
+            text: 'Yes'
+            on_release: root.yes()
+        Widget:
+        Button:
+            size_hint_y: None
+            height: 40
+            text: 'No'
+            font_size: 24
+            on_release: root.no()
+        Widget:
+    Widget:
+        size_hint_y: None
+        height: 50
+
+<TerminalDialog>:
+    orientation: 'vertical'
+    ScrollView:
+        bar_width: 10
+        do_scroll_x: False
+        scroll_type: ['bars','content']
+        Label:
+            size_hint_y: None
+            height: self.texture_size[1]
+            text_size: self.width, None
+            text: root.text
+            padding: 10,10
+            font_name: 'RobotoMono-Regular'
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: None
+        height: 50
+        Widget:
+        Button:
+            size_hint_y: None
+            height: 40
+            font_size: 24
+            text: 'Close'
+            on_release: root.close()
+        Widget:
+    Widget:
+        size_hint_y: None
+        height: 50

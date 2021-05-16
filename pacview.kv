@@ -1,0 +1,281 @@
+#:kivy 2.0.0
+
+#:import AppRecycleView apprecycleview
+#:import HighlightLabel highlight_label
+
+#:set LIST_ITEM_HEIGHT  54
+#:set LIST_WIDTH        250
+#:set BAR_WIDTH         10
+#:set FILTER_BAR_HEIGHT 30
+
+# default button/acccordion colors:
+#:set HIGHLIGHT_COLOR (50/255, 164/255, 206/255)
+#:set NORMAL_COLOR (88/255, 88/255, 88/255)
+
+
+#:include imagebutton.kv
+
+#:include breadcrumb.kv
+#:import BreadCrumb breadcrumb
+
+#:include dialog.kv
+#:import YesNoDialog dialog
+
+
+<PackageDesc@Label>:
+    size_hint: None, None
+    width: 170
+    text_size: self.size
+    halign: 'left'
+    valign: 'top'
+    padding: 5,5
+
+
+<PackageData@Label>:
+    size_hint_y: None
+    height: self.texture_size[1]
+    text_size: self.width, None
+    halign: 'left'
+    valign: 'top'
+    padding: 5,5
+
+
+<WrapHighlightLabel@HighlightLabel>:
+    markup: True
+    highlight_color: (*HIGHLIGHT_COLOR, 1)
+    size_hint_y: None
+    height: self.texture_size[1]
+    text_size: self.width, None
+    halign: 'left'
+    valign: 'top'
+    padding: 5,5
+
+
+<DescriptionRow@BoxLayout>:
+    desc: ''
+    data: ''
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: max(pkg_desc.height, pkg_data.height)
+    opacity: 0 if root.data == '' else 1
+    PackageDesc:
+        id: pkg_desc
+        text: root.desc
+        height: pkg_data.height
+    PackageData:
+        id: pkg_data
+        text: root.data
+        min_height: 20
+
+
+<WrapDescriptionRow>:
+    pkg_data: pkg_data
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: max(pkg_desc.height, pkg_data.height)
+    PackageDesc:
+        id: pkg_desc
+        text: root.desc
+        height: pkg_data.height
+    WrapHighlightLabel:
+        id: pkg_data
+        text: root.data
+        min_height: 20
+        on_ref_clicked: root.ref_clicked(args[1])
+
+
+<OptionButton@Button>:
+    size_hint_y: None
+    height: FILTER_BAR_HEIGHT
+
+<SlimSpinner@Spinner>:
+    size_hint_y: None
+    height: FILTER_BAR_HEIGHT
+    option_cls: 'OptionButton'
+
+
+<PackageView>:
+    highlight_labels: [hl_url, hl_depends_on, hl_required_by, hl_opt_installed, hl_opt_not_installed]
+    breadcrumb: breadcrumb
+    orientation: 'vertical'
+    Label:
+        canvas.before:
+            Color:
+                rgba: (*HIGHLIGHT_COLOR, 1)
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        size_hint_y: None
+        height: 50
+        text_size: self.size
+        text: root.package['Name']
+        halign: 'center'
+        valign: 'center'
+        font_size: 30
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        opacity: 0 if len(root.package['Name']) == 0 else 1
+        DescriptionRow:
+            desc: 'Description'
+            data: root.package['Description']
+        WrapDescriptionRow:
+            id: hl_url
+            desc: 'URL'
+            data: root.package['URL']
+            on_ref_clicked: root.on_ref_clicked('URL', args[1])
+        DescriptionRow:
+            desc: 'Packager'
+            data: root.package['Packager']
+        WrapDescriptionRow:
+            id: hl_depends_on
+            desc: 'Depends on'
+            data: root.package['DependsOn']
+            on_ref_clicked: root.on_ref_clicked('DependsOn', args[1])
+        WrapDescriptionRow:
+            id: hl_required_by
+            desc: 'Required by'
+            data: root.package['RequiredBy']
+            on_ref_clicked: root.on_ref_clicked('RequiredBy', args[1])
+        WrapDescriptionRow:
+            id: hl_opt_installed
+            desc: 'Installed optional'
+            data: root.package['InstalledOptions']
+            on_ref_clicked: root.on_ref_clicked('InstalledOptions', args[1])
+        WrapDescriptionRow:
+            id: hl_opt_not_installed
+            desc: 'Not installed optional'
+            data: root.package['UninstalledOptions']
+            on_ref_clicked: root.on_ref_clicked('UninstalledOptions', args[1])
+        DescriptionRow:
+            desc: 'Installed Size'
+            data: root.package['InstalledSize']
+        DescriptionRow:
+            desc: 'Installed Date'
+            data: root.package['InstallDate']
+        Widget:
+    BreadCrumb:
+        id: breadcrumb
+
+<PackageListItemLabel@Label>:
+    size_hint: None,None
+    text_size: self.size
+    padding_x: 5
+    shorten: True
+
+<PackageListItem>:
+    orientation: 'vertical'
+    size_hint: None,None
+    size: LIST_WIDTH,LIST_ITEM_HEIGHT
+    canvas.before:
+        Color:
+            rgba: (*HIGHLIGHT_COLOR, 1) if root.selected else root.background_color
+        Rectangle:
+            size: self.size
+            pos: self.pos
+    PackageListItemLabel:
+        text: root.Name
+        size: root.width, 30
+        halign: 'left'
+        valign: 'bottom'
+        bold: True
+        font_size: 18
+    PackageListItemLabel:
+        text: root.Version
+        size: root.width, LIST_ITEM_HEIGHT - 30
+        halign: 'right'
+        valign: 'top'
+        color: (0.9,0.9,0.9,1)
+
+<PackageListView>:
+    child_layout: child_layout
+    viewclass: 'PackageListItem'
+    scroll_type: ['bars','content']
+    bar_width: BAR_WIDTH
+    scroll_wheel_distance: LIST_ITEM_HEIGHT
+    do_scroll_x: False
+    SelectableRecycleBoxLayout:
+        id: child_layout
+        size_hint_x: None
+        width: LIST_WIDTH
+        orientation: 'vertical'
+        default_size: None, LIST_ITEM_HEIGHT
+        default_size_hint: 1, None
+        size_hint_y: None
+        height: self.minimum_height
+        multiselect: False
+        touch_multiselect: False
+
+<PacView>:
+    listview: listview
+    view_selector: view_selector
+    selected_package: selected_package
+    filter_textbox: filter_textbox
+    orientation: 'vertical'
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: None
+        height: FILTER_BAR_HEIGHT
+        Label:
+            size_hint_x: None
+            width: self.texture_size[0]
+            text: "Package Type:"
+            padding: 5,0
+        SlimSpinner:
+            id: view_selector
+            size_hint_x: None
+            width: 150
+            values: ('Explicit', 'All', 'Obsolete', 'Not Required')
+        Widget:
+            size_hint_x: None
+            width: 10
+        Label:
+            size_hint_x: None
+            width: self.texture_size[0]
+            text: "Package Name:"
+            padding: 5,0
+        TextInput:
+            id: filter_textbox
+            background_color: (*NORMAL_COLOR, 1)
+            foreground_color: (1, 1, 1, 1)
+            cursor_color: (*HIGHLIGHT_COLOR, 1)
+            multiline: False
+            hint_text: 'Enter text to filter names'
+        ImageButton:
+            size_hint_x: None
+            width: 40
+            on_release: root.delete_selected_package()
+            source: 'img/garbage_can.png'
+            disabled: not root.can_delete
+    Widget:
+        size_hint_y: None
+        height: 2
+        canvas:
+            Color:
+                rgb: HIGHLIGHT_COLOR
+            Rectangle:
+                pos: self.pos
+                size: self.size
+    BoxLayout:
+        orientation: 'horizontal'
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_x: None
+            width: LIST_WIDTH + BAR_WIDTH
+            PackageListView:
+                id: listview
+            Label:
+                size_hint: None, None
+                size: LIST_WIDTH, 30
+                text: root.listview.title
+        Widget:
+            size_hint_x: None
+            width: 2
+            canvas:
+                Color:
+                    rgb: HIGHLIGHT_COLOR
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+        PackageView:
+            id: selected_package
