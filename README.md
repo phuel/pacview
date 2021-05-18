@@ -33,3 +33,10 @@ The deletion of packages is performed by the shell script named `pacdel.sh`. Thi
 ```
 to `/etc/sudoers` using `visudo`. This is done to prevent that `pacman` itself must be executable without a password or that `pacview` must handle password entry.
 
+## Accessing packages on remote computers
+
+`pacview` can be called with a username and a hostname like:
+```bash
+./pacview.py user@host
+```
+The specified user must be able to log into the host using `ssh` without a password. `pacview` executes all commands via `ssh` when a username and hostname is given on the commandline.
