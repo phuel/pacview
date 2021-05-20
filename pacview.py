@@ -2,6 +2,7 @@
 
 import os
 import sys
+import re
 import argparse
 
 import kivy
@@ -34,6 +35,12 @@ def main():
     parser.add_argument("remote", nargs="?", help="the remote address")
     
     args = parser.parse_args()
+
+    remote = args.remote
+    # Either 'ssh://user@host:port' or 'user@host' is allowed as ssh destination.
+    if not re.match(r'ssh://(\w+@)?\w+(:\d{1,5})?', remote) and not re.match(r'(\w+@)?\w+', remote):
+        Logger.error("Invalid remote address: '" +  remote + "'")
+        return
 
     db = PacManDb(args.remote)
     Logger.info("pacview: Number of packages: {0}".format(len(db.package_names)))

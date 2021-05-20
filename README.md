@@ -35,8 +35,12 @@ to `/etc/sudoers` using `visudo`. This is done to prevent that `pacman` itself m
 
 ## Accessing packages on remote computers
 
+`pacview` can execute all commands via `ssh` when a username and hostname is given on the commandline.
+
 `pacview` can be called with a username and a hostname like:
 ```bash
 ./pacview.py user@host
 ```
-The specified user must be able to log into the host using `ssh` without a password. `pacview` executes all commands via `ssh` when a username and hostname is given on the commandline.
+Alternatively the URI notation `ssh://user@host:port` can be used to specify the destination.
+
+The specified user must be able to log into the host using `ssh` without a password.

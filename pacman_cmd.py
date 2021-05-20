@@ -3,6 +3,8 @@ import re
 
 class PacmanCmd():
     def __init__(self, remote):
+        if not remote.startswith('ssh://'):
+            remote = 'ssh://' + remote
         self.remote = remote
 
     def exec(self, pacman_args):
