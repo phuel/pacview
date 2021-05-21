@@ -38,7 +38,7 @@ def main():
 
     remote = args.remote
     # Either 'ssh://user@host:port' or 'user@host' is allowed as ssh destination.
-    if not re.match(r'ssh://(\w+@)?\w+(:\d{1,5})?', remote) and not re.match(r'(\w+@)?\w+', remote):
+    if remote is not None and not re.match(r'ssh://(\w+@)?\w+(:\d{1,5})?', remote) and not re.match(r'(\w+@)?\w+', remote):
         Logger.error("Invalid remote address: '" +  remote + "'")
         return
 
