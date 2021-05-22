@@ -4,8 +4,8 @@ import re
 class PacmanCmd():
     def __init__(self, remote):
         self.remote = remote
-        if self.remote is not None and not remote.startswith('ssh://'):
-            remote = 'ssh://' + remote
+        if self.remote is not None and not self.remote.startswith('ssh://'):
+            self.remote = 'ssh://' + self.remote
 
     def exec(self, pacman_args):
         """Call pacman and return the lines output by pacman."""
