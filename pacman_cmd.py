@@ -36,7 +36,8 @@ class PacmanCmd():
         command = self._create_command(['whereis', 'pacdel.sh'])
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')
         result = process.communicate()
-        return re.match(r"pacdel:\s/\w+", result[0])
+	# Newer versions of 'whereis' don't strip the extension of the executable anymore.
+        return re.match(r"pacdel(.sh)?:\s+/[\w/]+/pacdel.sh", result[0])
 
     def _create_command(self, command):
         if self.remote is not None:
