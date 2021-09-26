@@ -19,13 +19,11 @@ class PacmanCmd():
         return result.splitlines()
 
     def delete(self, packages):
-        # To enable pacview to delete packages the script 'pacdel.sh' must be
-        # found via the PATH and it must be allowed to be executed by sudo
-        # without a password.
+        # To allow pacview to delete packages the 'pacman' must be allowed to be executed by sudo without a password.
         # This can be done by adding the line
-        #   username ALL = (root) NOPASSWD: /path/to/pacdel.sh
+        #   username ALL = (root) NOPASSWD: /usr/bin/pacman
         # to /etc/sudoers using visudo.
-        command = self._create_command(['sudo', '-n', 'pacdel.sh'])
+        command = self._create_command(['sudo', '-n', 'pacman', '-R', '--noconfirm', '--noprogressbar'])
         packages.reverse()
         command.extend(packages)
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')
@@ -33,14 +31,12 @@ class PacmanCmd():
 
     def can_delete(self):
         """Return a value indicating whether the script is available that is needed to delete packages."""
-        command = self._create_command(['whereis', 'pacdel.sh'])
+        command = self._create_command(['sudo', '-n', 'pacman', '-V'])
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')
         result = process.communicate()
-	# Newer versions of 'whereis' don't strip the extension of the executable anymore.
-        return re.match(r"pacdel(.sh)?:\s+/[\w/]+/pacdel.sh", result[0])
+        return result[1] == ''
 
     def _create_command(self, command):
         if self.remote is not None:
-            # Source the .bashrc to externd the PATH before file before executing the pacdel script.
-            command = [ 'ssh', '-t', self.remote, '.', '.bashrc', ';' ] + command
+            command = [ 'ssh', self.remote ] + command
         return command

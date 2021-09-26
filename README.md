@@ -27,11 +27,11 @@ Typing a package name into the `Package Name` field filters the package list to 
 
 The garbage can button on the top right side can be used to delete packages the are not required anymore.
 
-The deletion of packages is performed by the shell script named `pacdel.sh`. This script must be executable and found in the PATH. Additionally it must be configured to be executed via `sudo` without asking for a password. This can be done by adding the line
+The deletion of packages rwquired that `pacman` is configured to be executed via `sudo` without asking for a password. This can be done by adding the line
 ```
-    username ALL = (root) NOPASSWD: /path/to/pacdel.sh
+    username ALL = (root) NOPASSWD: /usr/bin/pacman
 ```
-to `/etc/sudoers` using `visudo`. This is done to prevent that `pacman` itself must be executable without a password or that `pacview` must handle password entry.
+to `/etc/sudoers` using `visudo`.
 
 ## Accessing packages on remote computers
 
